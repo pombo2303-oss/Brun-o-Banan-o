@@ -298,6 +298,38 @@ body {
 @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
 @keyframes floatBounce { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-18px) scale(1.05); } }
 @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+/* ✅ Melhorias para iPhone / Mobile */
+@media (max-width: 768px) {
+  /* Remove “discoteca” no mobile (fica só o tapete) */
+  body {
+    animation: none !important;
+    background: #000;
+  }
+
+  .bg-carpet::after {
+    background: rgba(0, 0, 0, 0.45);
+  }
+
+  /* Tapete mais lento para não pesar */
+  .bg-carpet-track {
+    animation-duration: 70s;
+  }
+
+  /* Texto: remove shake/rainbow para não parecer duplicado */
+  .titulo,
+  .subtitulo,
+  .titulo-p2 {
+    animation: none !important;
+    text-shadow: 2px 2px 0 #000 !important;
+  }
+  .titulo { line-height: 1.15; }
+
+  /* Botões: tira shake, mantém gradiente */
+  .btn, .btn-voltar, .overlay button {
+    animation: gradientShift 2s infinite !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -305,6 +337,7 @@ body {
 <!-- ═══ TAPETE ROLANTE ═══ -->
 <div class="bg-carpet" id="bgCarpet" aria-hidden="true">
   <div class="bg-carpet-track">
+    <!-- NOTA: se renomeares ficheiros, troca aqui os src -->
     <img src="egg sheeran.jpg" alt="">
     <img src="cat.jpg" alt="">
     <img src="Tralalero-Tralala.jpg" alt="">
@@ -342,7 +375,7 @@ body {
 <div class="pagina" id="pagina2">
   <div class="titulo-p2">Cá vai uma memória de ti meu amigalhão 🎥</div>
   <div class="video-wrapper">
-    <video id="videoBrunao" controls>
+    <video id="videoBrunao" controls playsinline webkit-playsinline>
       <source src="brunão bananão.mp4" type="video/mp4">
       O teu browser não suporta vídeo.
     </video>
@@ -431,7 +464,7 @@ function irParaPagina2() {
   trocarMusica(musica);
   esconderMemes();
   pararConfetis();
-  video.play();
+  video.play().catch(() => {});
   window.scrollTo(0, 0);
 }
 
@@ -463,7 +496,7 @@ function voltarParaPagina2() {
   trocarMusica(musica);
   esconderMemes();
   pararConfetis();
-  video.play();
+  video.play().catch(() => {});
   window.scrollTo(0, 0);
 }
 
