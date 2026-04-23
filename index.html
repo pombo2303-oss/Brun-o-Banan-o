@@ -17,12 +17,6 @@ body {
   animation: bgFlash 0.5s infinite;
 }
 
-/* Controlar “quanta escuridão” fica por cima do tapete por página */
-body.p1 { --carpet-dim: 0.38; }
-body.p2 { --carpet-dim: 0.38; }
-/* Página 3: tapete mais visível */
-body.p3 { --carpet-dim: 0.18; }
-
 @keyframes bgFlash {
   0%   { background: #ff00ff; }
   25%  { background: #00ffff; }
@@ -31,66 +25,71 @@ body.p3 { --carpet-dim: 0.18; }
   100% { background: #ff00ff; }
 }
 
-/* ───── TAPETE ROLANTE (3 FILEIRAS) ───── */
+/* ───── TAPETE ROLANTE 3 FILEIRAS ───── */
 .bg-carpet {
   position: fixed;
   inset: 0;
   overflow: hidden;
   z-index: 0;
   pointer-events: none;
+  display: flex;
+  flex-direction: column;
 }
 
 .bg-carpet::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, var(--carpet-dim, 0.35));
+  background: rgba(0, 0, 0, 0.35);
   pointer-events: none;
 }
 
-/* Agora é uma coluna com 3 pistas */
-.bg-carpet-rows{
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.bg-carpet-row{
-  flex: 1 1 0;
+.bg-carpet-row {
+  height: 33.333vh;
   overflow: hidden;
+  flex-shrink: 0;
+  position: relative;
 }
 
 .bg-carpet-track {
   display: flex;
   height: 100%;
   width: max-content;
-  will-change: transform;
 }
 
 .bg-carpet-track img {
-  height: 100%;
+  height: 33.333vh;
   width: auto;
   display: block;
   object-fit: cover;
   flex-shrink: 0;
   pointer-events: none;
-  /* um bocadinho mais “vivo” para se perceber melhor */
-  filter: saturate(1.15) contrast(1.05);
 }
 
-@keyframes carpetSlideLeft {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+/* Fileira 1 — esquerda para direita */
+.row1 .bg-carpet-track {
+  animation: carpetLTR 50s linear infinite;
 }
-@keyframes carpetSlideRight {
+
+/* Fileira 2 (meio) — direita para esquerda */
+.row2 .bg-carpet-track {
+  animation: carpetRTL 45s linear infinite;
+}
+
+/* Fileira 3 (baixo) — direita para esquerda */
+.row3 .bg-carpet-track {
+  animation: carpetRTL 55s linear infinite;
+}
+
+@keyframes carpetLTR {
   from { transform: translateX(-50%); }
   to   { transform: translateX(0); }
 }
 
-/* velocidades diferentes por fileira */
-.bg-carpet-row.row1 .bg-carpet-track { animation: carpetSlideLeft 60s linear infinite; }
-.bg-carpet-row.row2 .bg-carpet-track { animation: carpetSlideRight 85s linear infinite; }
-.bg-carpet-row.row3 .bg-carpet-track { animation: carpetSlideLeft 72s linear infinite; }
+@keyframes carpetRTL {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
 
 /* ───── PÁGINAS ───── */
 .pagina {
@@ -232,7 +231,9 @@ body.p3 { --carpet-dim: 0.18; }
 }
 
 /* ───── PÁGINA 3 — FESTA ───── */
-#pagina3 { animation: festaPulse 0.4s infinite; }
+#pagina3 {
+  animation: festaPulse 0.4s infinite;
+}
 
 @keyframes festaPulse {
   0%, 100% { transform: scale(1); }
@@ -325,17 +326,74 @@ body.p3 { --carpet-dim: 0.18; }
 @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
 @keyframes floatBounce { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-18px) scale(1.05); } }
 @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+/* ✅ Mobile */
+@media (max-width: 768px) {
+  body {
+    animation: none !important;
+    background: #000;
+  }
+
+  .bg-carpet::after {
+    background: rgba(0, 0, 0, 0.45);
+  }
+
+  .row1 .bg-carpet-track { animation-duration: 70s; }
+  .row2 .bg-carpet-track { animation-duration: 65s; }
+  .row3 .bg-carpet-track { animation-duration: 75s; }
+
+  .titulo,
+  .subtitulo,
+  .titulo-p2 {
+    animation: none !important;
+    text-shadow: 2px 2px 0 #000 !important;
+  }
+  .titulo { line-height: 1.15; }
+
+  .btn, .btn-voltar, .overlay button {
+    animation: gradientShift 2s infinite !important;
+  }
+}
 </style>
 </head>
-<body class="p1">
+<body>
 
-<!-- ═══ TAPETE ROLANTE (3 fileiras) ═══ -->
+<!-- ═══ TAPETE ROLANTE — 3 FILEIRAS ═══ -->
 <div class="bg-carpet" id="bgCarpet" aria-hidden="true">
-  <div class="bg-carpet-rows">
-    <div class="bg-carpet-row row1"><div class="bg-carpet-track" id="track1"></div></div>
-    <div class="bg-carpet-row row2"><div class="bg-carpet-track" id="track2"></div></div>
-    <div class="bg-carpet-row row3"><div class="bg-carpet-track" id="track3"></div></div>
+
+  <!-- FILEIRA 1: esquerda → direita -->
+  <div class="bg-carpet-row row1">
+    <div class="bg-carpet-track">
+      <img src="egg sheeran.jpg" alt=""><img src="cat.jpg" alt=""><img src="Tralalero-Tralala.jpg" alt=""><img src="alien.jpg" alt="">
+      <img src="passaro.jpg" alt=""><img src="homem.jpg" alt=""><img src="orangotango ananango.jpg" alt=""><img src="sapeca perereca.jpg" alt="">
+      <!-- duplicado para loop contínuo -->
+      <img src="egg sheeran.jpg" alt=""><img src="cat.jpg" alt=""><img src="Tralalero-Tralala.jpg" alt=""><img src="alien.jpg" alt="">
+      <img src="passaro.jpg" alt=""><img src="homem.jpg" alt=""><img src="orangotango ananango.jpg" alt=""><img src="sapeca perereca.jpg" alt="">
+    </div>
   </div>
+
+  <!-- FILEIRA 2 (meio): direita → esquerda -->
+  <div class="bg-carpet-row row2">
+    <div class="bg-carpet-track">
+      <img src="orangotango ananango.jpg" alt=""><img src="sapeca perereca.jpg" alt=""><img src="homem.jpg" alt=""><img src="passaro.jpg" alt="">
+      <img src="alien.jpg" alt=""><img src="Tralalero-Tralala.jpg" alt=""><img src="cat.jpg" alt=""><img src="egg sheeran.jpg" alt="">
+      <!-- duplicado para loop contínuo -->
+      <img src="orangotango ananango.jpg" alt=""><img src="sapeca perereca.jpg" alt=""><img src="homem.jpg" alt=""><img src="passaro.jpg" alt="">
+      <img src="alien.jpg" alt=""><img src="Tralalero-Tralala.jpg" alt=""><img src="cat.jpg" alt=""><img src="egg sheeran.jpg" alt="">
+    </div>
+  </div>
+
+  <!-- FILEIRA 3 (baixo): direita → esquerda -->
+  <div class="bg-carpet-row row3">
+    <div class="bg-carpet-track">
+      <img src="passaro.jpg" alt=""><img src="alien.jpg" alt=""><img src="cat.jpg" alt=""><img src="egg sheeran.jpg" alt="">
+      <img src="sapeca perereca.jpg" alt=""><img src="homem.jpg" alt=""><img src="orangotango ananango.jpg" alt=""><img src="Tralalero-Tralala.jpg" alt="">
+      <!-- duplicado para loop contínuo -->
+      <img src="passaro.jpg" alt=""><img src="alien.jpg" alt=""><img src="cat.jpg" alt=""><img src="egg sheeran.jpg" alt="">
+      <img src="sapeca perereca.jpg" alt=""><img src="homem.jpg" alt=""><img src="orangotango ananango.jpg" alt=""><img src="Tralalero-Tralala.jpg" alt="">
+    </div>
+  </div>
+
 </div>
 
 <!-- OVERLAY SOM -->
@@ -407,61 +465,14 @@ let aTocar = false;
 let musicaAtual = musica;
 let confetiInterval = null;
 
-/* ───── Tapete 3 fileiras com ordem aleatória ───── */
-const carpetImages = [
-  'egg sheeran.jpg',
-  'cat.jpg',
-  'Tralalero-Tralala.jpg',
-  'alien.jpg',
-  'passaro.jpg',
-  'homem.jpg',
-  'orangotango ananango.jpg',
-  'sapeca perereca.jpg',
-];
-
-function shuffle(arr){
-  const a = arr.slice();
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-function fillTrack(trackEl, imgList){
-  trackEl.innerHTML = '';
-  // Repetir a sequência 2x para o loop (-50%) funcionar bem
-  const seq = imgList.concat(imgList);
-  seq.forEach(src => {
-    const img = document.createElement('img');
-    img.src = src;
-    img.alt = '';
-    trackEl.appendChild(img);
-  });
-}
-
-function initCarpet(){
-  const t1 = document.getElementById('track1');
-  const t2 = document.getElementById('track2');
-  const t3 = document.getElementById('track3');
-
-  fillTrack(t1, shuffle(carpetImages));
-  fillTrack(t2, shuffle(carpetImages));
-  fillTrack(t3, shuffle(carpetImages));
-}
-
-/* ───── Som ───── */
-function ensurePlayIfEnabled(){
-  if (!aTocar) return;
-  musicaAtual.play().catch(() => {});
-  soundBtn.textContent = '🔊';
-}
-
 function ativarSom() {
-  // Ativa som pela primeira vez (precisa de gesto do utilizador)
-  aTocar = true;
-  overlay.style.display = 'none';
-  ensurePlayIfEnabled();
+  musicaAtual.play()
+    .then(() => {
+      aTocar = true;
+      overlay.style.display = 'none';
+      soundBtn.textContent = '🔊';
+    })
+    .catch(() => { overlay.style.display = 'none'; });
 }
 
 function toggleSom() {
@@ -470,80 +481,65 @@ function toggleSom() {
     aTocar = false;
     soundBtn.textContent = '🔇';
   } else {
+    musicaAtual.play();
     aTocar = true;
-    ensurePlayIfEnabled();
+    soundBtn.textContent = '🔊';
   }
 }
 
 function trocarMusica(novaMusica) {
-  if (musicaAtual === novaMusica) {
-    ensurePlayIfEnabled();
-    return;
-  }
-
-  // parar atual
+  if (musicaAtual === novaMusica) return;
+  const estavaATocar = aTocar;
   musicaAtual.pause();
   musicaAtual.currentTime = 0;
-
-  // trocar
   musicaAtual = novaMusica;
-
-  // se som estiver ativo, tocar a nova
-  ensurePlayIfEnabled();
+  if (estavaATocar) musicaAtual.play().catch(() => {});
 }
 
-/* ───── Navegação (com classe no body p/ controlar tapete) ───── */
-function setPagina(n) {
-  document.getElementById('pagina1').classList.remove('ativa');
-  document.getElementById('pagina2').classList.remove('ativa');
-  document.getElementById('pagina3').classList.remove('ativa');
-  document.getElementById('pagina' + n).classList.add('ativa');
-
-  document.body.classList.remove('p1','p2','p3');
-  document.body.classList.add('p' + n);
-
-  window.scrollTo(0, 0);
-}
-
-// P1 -> P2
+// ───── NAVEGAÇÃO ─────
 function irParaPagina2() {
-  setPagina(2);
+  document.getElementById('pagina1').classList.remove('ativa');
+  document.getElementById('pagina2').classList.add('ativa');
   trocarMusica(musica);
   esconderMemes();
   pararConfetis();
-  // NÃO fazer video.play() automaticamente (no iPhone costuma matar o áudio)
+  video.play().catch(() => {});
+  window.scrollTo(0, 0);
 }
 
-// P2 -> P1
 function voltarParaPagina1() {
-  setPagina(1);
+  document.getElementById('pagina2').classList.remove('ativa');
+  document.getElementById('pagina1').classList.add('ativa');
   trocarMusica(musica);
   esconderMemes();
   pararConfetis();
   video.pause();
   video.currentTime = 0;
+  window.scrollTo(0, 0);
 }
 
-// P2 -> P3
 function irParaPagina3() {
-  setPagina(3);
+  document.getElementById('pagina2').classList.remove('ativa');
+  document.getElementById('pagina3').classList.add('ativa');
   video.pause();
   video.currentTime = 0;
   trocarMusica(musica2);
   mostrarMemes();
   iniciarConfetis();
+  window.scrollTo(0, 0);
 }
 
-// P3 -> P2
 function voltarParaPagina2() {
-  setPagina(2);
-  trocarMusica(musica);   // ✅ volta para música 1 automaticamente
+  document.getElementById('pagina3').classList.remove('ativa');
+  document.getElementById('pagina2').classList.add('ativa');
+  trocarMusica(musica);
   esconderMemes();
   pararConfetis();
-  // não auto-play do vídeo
+  video.play().catch(() => {});
+  window.scrollTo(0, 0);
 }
 
-/* ───── MEMES COM CHROMA KEY ───── */
+// ───── MEMES COM CHROMA KEY ─────
 const memeSrcs = [
   'gato1.mp4','gato2.mp4','gato3.mp4','gato4.mp4',
   'cao1.mp4','cao2.mp4','cao3.mp4'
@@ -578,7 +574,9 @@ function iniciarMemes() {
         const data = frame.data;
         for (let p = 0; p < data.length; p += 4) {
           const r = data[p], g = data[p+1], b = data[p+2];
-          if (g > 120 && g > r * 1.5 && g > b * 1.5) data[p+3] = 0;
+          if (g > 120 && g > r * 1.5 && g > b * 1.5) {
+            data[p+3] = 0;
+          }
         }
         ctx.putImageData(frame, 0, 0);
       }
@@ -612,10 +610,10 @@ function loopMemes() {
     const larg = m.el.width  || 240;
     const alt  = m.el.height || 240;
 
-    if (m.x <= 0)                          { m.x = 0; m.vx = Math.abs(m.vx); }
-    if (m.x >= window.innerWidth  - larg)  { m.x = window.innerWidth  - larg; m.vx = -Math.abs(m.vx); }
-    if (m.y <= 0)                          { m.y = 0; m.vy = Math.abs(m.vy); }
-    if (m.y >= window.innerHeight - alt)   { m.y = window.innerHeight - alt;  m.vy = -Math.abs(m.vy); }
+    if (m.x <= 0)                         { m.x = 0; m.vx = Math.abs(m.vx); }
+    if (m.x >= window.innerWidth  - larg) { m.x = window.innerWidth  - larg; m.vx = -Math.abs(m.vx); }
+    if (m.y <= 0)                         { m.y = 0; m.vy = Math.abs(m.vy); }
+    if (m.y >= window.innerHeight - alt)  { m.y = window.innerHeight - alt;  m.vy = -Math.abs(m.vy); }
 
     m.el.style.transform = `translate(${m.x}px, ${m.y}px)`;
   });
@@ -624,14 +622,25 @@ function loopMemes() {
 }
 
 function mostrarMemes() {
-  memes.forEach(m => { m.visivel = true; m.el.style.display = 'block'; });
+  memes.forEach(m => {
+    m.visivel = true;
+    m.el.style.display = 'block';
+  });
 }
 
 function esconderMemes() {
-  memes.forEach(m => { m.visivel = false; m.el.style.display = 'none'; });
+  memes.forEach(m => {
+    m.visivel = false;
+    m.el.style.display = 'none';
+  });
 }
 
-/* ───── CONFETIS ───── */
+window.addEventListener('load', () => {
+  iniciarMemes();
+  esconderMemes();
+});
+
+// ───── CONFETIS ─────
 const coresConfete = ['#ff0000','#ff8800','#ffff00','#00ff00','#00ffff','#ff00ff','#ffffff'];
 
 function criarConfete() {
@@ -661,7 +670,7 @@ function pararConfetis() {
   }
 }
 
-/* ───── EMOJIS VOADORES ───── */
+// ───── EMOJIS VOADORES ─────
 function criarEmoji() {
   const lista = ['🍌','🎂','🎉','🎊','👽','🐦','💥','⭐'];
   const emoji = document.createElement('div');
@@ -673,13 +682,7 @@ function criarEmoji() {
   document.body.appendChild(emoji);
   setTimeout(() => emoji.remove(), 5000);
 }
-
-window.addEventListener('load', () => {
-  initCarpet();
-  iniciarMemes();
-  esconderMemes();
-  setInterval(criarEmoji, 400);
-});
+setInterval(criarEmoji, 400);
 </script>
 
 </body>
